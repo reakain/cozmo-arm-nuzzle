@@ -95,4 +95,7 @@ Possible platform to try: https://aws.amazon.com/robomaker/
 3. [cozmo SDK](http://cozmosdk.anki.com/docs/index.html)
 4. [OpenCV tutorials](https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_tutorials.html)
 5. [imutils](https://github.com/jrosebr1/imutils)
-6. 
+6. [OpenCV feature detection](https://docs.opencv.org/3.4/d7/d66/tutorial_feature_detection.html)
+7. [OpenCV edge detection](https://docs.opencv.org/master/da/d22/tutorial_py_canny.html)
+8. [Google hand tracking](https://ai.googleblog.com/2019/08/on-device-real-time-hand-tracking-with.html)
+9. 
