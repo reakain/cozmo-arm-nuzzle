@@ -1,7 +1,8 @@
+#!/usr/bin/env python
+
 # example Cozmo video feed
 # taken from
 # https://github.com/zayfod/pycozmo/blob/master/examples/video.py
-#!/usr/bin/env python
 
 import time
 
