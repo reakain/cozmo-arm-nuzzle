@@ -11,34 +11,44 @@ import pycozmo
 
 # Last image, received from the robot.
 last_im = None
+updated = False
 
 
 def on_camera_image(cli, new_im):
     """ Handle new images, coming from the robot. """
     del cli
 
-    global last_im
+    global last_im, updated
     last_im = new_im
+    updated = True
 
 
 def pycozmo_program(cli: pycozmo.client.Client):
 
-    global last_im
+    global last_im, updated
 
     # Raise head.
     angle = (pycozmo.robot.MAX_HEAD_ANGLE.radians - pycozmo.robot.MIN_HEAD_ANGLE.radians) / 2.0
     cli.set_head_angle(angle)
 
+    pkt = pycozmo.protocol_encoder.EnableCamera()
+    cli.conn.send(pkt)
+    pkt = pycozmo.protocol_encoder.EnableColorImages(enable=True)
+    cli.conn.send(pkt)
+
+    # Wait for image to stabilize.
+    time.sleep(2.0)
+
     # Register to receive new camera images.
     cli.add_handler(pycozmo.event.EvtNewRawCameraImage, on_camera_image)
 
     # Enable camera.
-    pkt = pycozmo.protocol_encoder.EnableCamera()
-    cli.conn.send(pkt)
+    #pkt = pycozmo.protocol_encoder.EnableCamera()
+    #cli.conn.send(pkt)
 
     while True:
 
-        if last_im:
+        if updated:
 
             # Get last image.
             im = last_im
@@ -50,6 +60,7 @@ def pycozmo_program(cli: pycozmo.client.Client):
 
             # Display the result image.
             cli.display_image(im)
+            updated = False
 
         # Run with 25 FPS.
         time.sleep(1 / 25)
