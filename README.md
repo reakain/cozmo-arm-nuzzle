@@ -98,4 +98,7 @@ Possible platform to try: https://aws.amazon.com/robomaker/
 6. [OpenCV feature detection](https://docs.opencv.org/3.4/d7/d66/tutorial_feature_detection.html)
 7. [OpenCV edge detection](https://docs.opencv.org/master/da/d22/tutorial_py_canny.html)
 8. [Google hand tracking](https://ai.googleblog.com/2019/08/on-device-real-time-hand-tracking-with.html)
-9. 
+9. [OpenCV Shape Detection](https://www.pyimagesearch.com/2016/02/08/opencv-shape-detection/)
+10. [More Shape Detection](https://hub.packtpub.com/opencv-detecting-edges-lines-shapes/)
+11. [Object Recognition](https://towardsdatascience.com/extracting-circles-and-long-edges-from-images-using-opencv-and-python-236218f0fee4)
+12. [Contours](https://towardsdatascience.com/edges-and-contours-basics-with-opencv-66d3263fd6d1)

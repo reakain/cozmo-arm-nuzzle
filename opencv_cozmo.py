@@ -29,7 +29,7 @@ def on_camera_image(cli, new_im):
     open_cv_image = np.array(new_im) 
     # Convert RGB to BGR 
     last_im = open_cv_image[:, :, ::-1].copy()
-    
+
     updated = True
 
 # From: https://stackoverflow.com/a/64183410
@@ -90,16 +90,39 @@ def pycozmo_program(cli: pycozmo.client.Client):
     #pkt = pycozmo.protocol_encoder.EnableCamera()
     #cli.conn.send(pkt)
 
+    fgbg = cv.createBackgroundSubtractorMOG2(
+    history=10,
+    varThreshold=2,
+    detectShadows=False)
+
     while True:
 
         if updated:
 
             # Get last image.
             im = last_im
+            im2 = im.copy()
+            gray = cv.cvtColor(im2, cv.COLOR_BGR2GRAY)
             updated = False
 
-            #img = im
-            edges = cv.Canny(im,100,200)
+            # filtering https://www.sicara.ai/blog/2019-03-12-edge-detection-in-opencv
+            filtered = cv.bilateralFilter(gray, 7, 50, 50)
+            foreground = fgbg.apply(filtered)
+
+            kernel = np.ones((50,50),np.uint8)
+            foreground = cv.morphologyEx(foreground, cv.MORPH_CLOSE, kernel)
+
+            # edge detection
+            edges = cv.Canny(filtered,100,200)
+
+            # Crop off moving area
+            cropped = (foreground //255) * edges
+
+            # convex hull from edge detection
+            contours, hierarchy = cv.findContours(edges, cv.RETR_LIST, cv.CHAIN_APPROX_SIMPLE)
+            for c in contours:
+                hull = cv.convexHull(c)
+                cv.drawContours(im2, [hull], 0, (0, 255, 0), 2)
 
             # completely fill the surface object 
             # with white colour 
@@ -109,7 +132,7 @@ def pycozmo_program(cli: pycozmo.client.Client):
             # to the display surface object at 
             # (0, 0) coordinate. 
             display_surface.blit(cv2ImageToSurface(im), (0, 0)) 
-            display_surface.blit(cv2ImageToSurface(edges), (0,240))
+            display_surface.blit(cv2ImageToSurface(cropped), (0,240))
             # Draws the surface object to the screen.   
             pygame.display.update()  
 
