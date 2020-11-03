@@ -3,6 +3,7 @@
 # example Cozmo video feed
 # taken from
 # https://github.com/zayfod/pycozmo/blob/master/examples/video.py
+# example pygame from https://www.geeksforgeeks.org/python-display-images-with-pygame/
 
 import time
 
