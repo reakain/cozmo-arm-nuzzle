@@ -16,7 +16,7 @@ import cv2 as cv
 
 
 # Last image, received from the robot.
-last_im = None
+last_im = np.zeros((320,240,3), np.uint8)
 updated = False
 
 
@@ -25,9 +25,26 @@ def on_camera_image(cli, new_im):
     del cli
 
     global last_im, updated
-    last_im = new_im
+    # from: https://stackoverflow.com/a/14140796
+    open_cv_image = np.array(new_im) 
+    # Convert RGB to BGR 
+    last_im = open_cv_image[:, :, ::-1].copy()
+    
     updated = True
 
+# From: https://stackoverflow.com/a/64183410
+def cv2ImageToSurface(cv2Image):
+    if cv2Image.dtype.name == 'uint16':
+        cv2Image = (cv2Image / 256).astype('uint8')
+    size = cv2Image.shape[1::-1]
+    if len(cv2Image.shape) == 2:
+        cv2Image = np.repeat(cv2Image.reshape(size[1], size[0], 1), 3, axis = 2)
+        format = 'RGB'
+    else:
+        format = 'RGBA' if cv2Image.shape[2] == 4 else 'RGB'
+        cv2Image[:, :, [0, 2]] = cv2Image[:, :, [2, 0]]
+    surface = pygame.image.frombuffer(cv2Image.flatten(), size, format)
+    return surface.convert_alpha() if format == 'RGBA' else surface.convert()
 
 def pycozmo_program(cli: pycozmo.client.Client):
 
@@ -81,7 +98,7 @@ def pycozmo_program(cli: pycozmo.client.Client):
             im = last_im
             updated = False
 
-            #img = cv.imread('test.jpg',0)
+            #img = im
             edges = cv.Canny(im,100,200)
 
             # completely fill the surface object 
@@ -91,8 +108,8 @@ def pycozmo_program(cli: pycozmo.client.Client):
             # copying the image surface object 
             # to the display surface object at 
             # (0, 0) coordinate. 
-            display_surface.blit(im, (0, 0)) 
-            display_surface.blit(edges, (0,240))
+            display_surface.blit(cv2ImageToSurface(im), (0, 0)) 
+            display_surface.blit(cv2ImageToSurface(edges), (0,240))
             # Draws the surface object to the screen.   
             pygame.display.update()  
 
