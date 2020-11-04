@@ -106,7 +106,10 @@ Possible platform to try: https://aws.amazon.com/robomaker/
 12. [Contours](https://towardsdatascience.com/edges-and-contours-basics-with-opencv-66d3263fd6d1)
 13. [Object Detection](https://www.analyticsvidhya.com/blog/2018/06/understanding-building-object-detection-model-python/)
 14. [TensorFlow? TensorFlow](https://towardsdatascience.com/object-detection-with-less-than-10-lines-of-code-using-python-2d28eebc5b11)
+15. [More TensorFlow](https://stackabuse.com/object-detection-with-imageai-in-python/)
 
 ### Part 2
 1. [OpenCV Distance](https://www.pyimagesearch.com/2015/01/19/find-distance-camera-objectmarker-using-python-opencv/)
 2. [OpenCV Distance between objects](https://www.pyimagesearch.com/2016/04/04/measuring-distance-between-objects-in-an-image-with-opencv/)
+3. [Raytracing oh no](https://medium.com/swlh/ray-tracing-from-scratch-in-python-41670e6a96f9)
+4. [Finger detection and tracking](https://dev.to/amarlearning/finger-detection-and-tracking-using-opencv-and-python-586m)
