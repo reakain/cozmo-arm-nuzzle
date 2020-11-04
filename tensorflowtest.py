@@ -71,7 +71,7 @@ def pycozmo_program(cli: pycozmo.client.Client):
     
 
     # Raise head.
-    angle = (pycozmo.robot.MAX_HEAD_ANGLE.radians - pycozmo.robot.MIN_HEAD_ANGLE.radians) / 2.0
+    angle = (pycozmo.robot.MAX_HEAD_ANGLE.radians - pycozmo.robot.MIN_HEAD_ANGLE.radians) / 4.0
     cli.set_head_angle(angle)
 
     pkt = pycozmo.protocol_encoder.EnableCamera()
@@ -96,6 +96,8 @@ def pycozmo_program(cli: pycozmo.client.Client):
             bbox, label, conf = cv.detect_common_objects(im)
 
             output_image = draw_bbox(im, bbox, label, conf)
+            cv2.imshow('Frame', output_image)
+
 
             # completely fill the surface object 
             # with white colour 
