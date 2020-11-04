@@ -90,6 +90,8 @@ Possible platform to try: https://aws.amazon.com/robomaker/
 
 
 ## References
+
+### Part 1
 1. [OpenCV](https://opencv.org/)
 2. [pycozmo](https://github.com/zayfod/pycozmo/)
 3. [cozmo SDK](http://cozmosdk.anki.com/docs/index.html)
@@ -102,3 +104,9 @@ Possible platform to try: https://aws.amazon.com/robomaker/
 10. [More Shape Detection](https://hub.packtpub.com/opencv-detecting-edges-lines-shapes/)
 11. [Object Recognition](https://towardsdatascience.com/extracting-circles-and-long-edges-from-images-using-opencv-and-python-236218f0fee4)
 12. [Contours](https://towardsdatascience.com/edges-and-contours-basics-with-opencv-66d3263fd6d1)
+13. [Object Detection](https://www.analyticsvidhya.com/blog/2018/06/understanding-building-object-detection-model-python/)
+14. [TensorFlow? TensorFlow](https://towardsdatascience.com/object-detection-with-less-than-10-lines-of-code-using-python-2d28eebc5b11)
+
+### Part 2
+1. [OpenCV Distance](https://www.pyimagesearch.com/2015/01/19/find-distance-camera-objectmarker-using-python-opencv/)
+2. [OpenCV Distance between objects](https://www.pyimagesearch.com/2016/04/04/measuring-distance-between-objects-in-an-image-with-opencv/)
