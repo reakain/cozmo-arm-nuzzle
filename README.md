@@ -113,3 +113,6 @@ Possible platform to try: https://aws.amazon.com/robomaker/
 2. [OpenCV Distance between objects](https://www.pyimagesearch.com/2016/04/04/measuring-distance-between-objects-in-an-image-with-opencv/)
 3. [Raytracing oh no](https://medium.com/swlh/ray-tracing-from-scratch-in-python-41670e6a96f9)
 4. [Finger detection and tracking](https://dev.to/amarlearning/finger-detection-and-tracking-using-opencv-and-python-586m)
+5. [Distance overlay options](https://www.oxagile.com/article/tracking-live-video-objects-with-a-moving-camera/)
+6. [Single camera distance estimate](https://oroboto.net/2018/11/11/estimating-object-location-with-a-single-camera-and-opencv/)
+7. [cam distance calibration](http://emaraic.com/blog/distance-measurement)
