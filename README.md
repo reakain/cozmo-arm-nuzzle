@@ -89,6 +89,16 @@ You may use as much existing software as you can; however, there must be some no
 Possible platform to try: https://aws.amazon.com/robomaker/
 
 
+## Obsolete code
+- tensorflowtest.py
+- detect_shapes.py
+- shapedetector.py
+- im_detect.py
+- main.py
+- test_video
+
+
+
 ## References
 
 ### Part 1
@@ -116,3 +126,7 @@ Possible platform to try: https://aws.amazon.com/robomaker/
 5. [Distance overlay options](https://www.oxagile.com/article/tracking-live-video-objects-with-a-moving-camera/)
 6. [Single camera distance estimate](https://oroboto.net/2018/11/11/estimating-object-location-with-a-single-camera-and-opencv/)
 7. [cam distance calibration](http://emaraic.com/blog/distance-measurement)
+8. [Object localization](https://kapernikov.com/object-localization-with-a-single-camera-and-object-dimensions/)
+9. [Camera Calibration in OpenCV](https://docs.opencv.org/3.1.0/dc/dbb/tutorial_py_calibration.html)
+10. [IDK size and distance](https://handmap.github.io/measuring-size-and-distance-opencv/)
+11. [Optical Flow](https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_video/py_lucas_kanade/py_lucas_kanade.html)
