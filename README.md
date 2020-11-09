@@ -130,3 +130,6 @@ Possible platform to try: https://aws.amazon.com/robomaker/
 9. [Camera Calibration in OpenCV](https://docs.opencv.org/3.1.0/dc/dbb/tutorial_py_calibration.html)
 10. [IDK size and distance](https://handmap.github.io/measuring-size-and-distance-opencv/)
 11. [Optical Flow](https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_video/py_lucas_kanade/py_lucas_kanade.html)
+12. [OpenCV real time pose](https://docs.opencv.org/master/dc/d2c/tutorial_real_time_pose.html)
+13. [OpenCV py pose](https://docs.opencv.org/master/d7/d53/tutorial_py_pose.html)
+14. [OpenCV Dense Optical Flow](https://www.geeksforgeeks.org/python-opencv-dense-optical-flow/)
