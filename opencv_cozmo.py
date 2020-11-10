@@ -13,6 +13,8 @@ import pygame
 import numpy as np
 import cv2
 
+import imutils
+
 from yolo import YOLO
 
 # ground, yolo, edge
@@ -56,13 +58,6 @@ def CheckGround(img):
     StepSize = 8
     EdgeArray = []
 
-    #time.sleep(0.1)#let image settle
-    #ret,img = capture.read() #get a bunch of frames to make sure current frame is the most recent
-    #ret,img = capture.read() 
-    #ret,img = capture.read()
-    #ret,img = capture.read()
-    #ret,img = capture.read() #5 seems to be enough
-
     imgGray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)   #convert img to grayscale and store result in imgGray
     imgGray = cv2.bilateralFilter(imgGray,9,30,30) #blur the image slightly to remove noise             
     imgEdge = cv2.Canny(imgGray, 50, 100)             #edge detection
@@ -86,7 +81,7 @@ def CheckGround(img):
     for x in range (len(EdgeArray)):        #draw lines from bottom of the screen to points in ObstacleArray
         cv2.line(img, (x*StepSize,imageheight), EdgeArray[x],(0,255,0),1)
 
-    return img
+    return img,EdgeArray
 
 
     #if DisplayImage is True:
@@ -142,6 +137,14 @@ def pycozmo_program(cli: pycozmo.client.Client):
     #pkt = pycozmo.protocol_encoder.EnableCamera()
     #cli.conn.send(pkt)
 
+    # MANUAL DISTANCE CALIBRATIONS
+    calibrated = False
+    # calibration: distance from cozmo to object (inches)
+    KNOWN_DISTANCE = 12.0
+    # calibration: width of your object of interest (inches)
+    KNOWN_WIDTH = 1.0
+
+
     fgbg = cv2.createBackgroundSubtractorMOG2(
     history=10,
     varThreshold=2,
@@ -164,7 +167,7 @@ def pycozmo_program(cli: pycozmo.client.Client):
                 im_both = np.vstack((last_im, detect_im))
             
             elif(analysis_method == "ground"):
-                grnd = CheckGround(last_im.copy())
+                grnd, edges = CheckGround(last_im.copy())
                 im_both = np.vstack((last_im, grnd))
 
             elif(analysis_method == "edge"):
@@ -191,6 +194,46 @@ def pycozmo_program(cli: pycozmo.client.Client):
                     cv2.drawContours(im2, [hull], 0, (0, 255, 0), 2)
                 
                 im_both = np.vstack((last_im, im2))
+
+                # DISTANCE DETECTION
+                # referenced https://www.pyimagesearch.com/2015/01/19/find-distance-camera-objectmarker-using-python-opencv/
+                # create a list of contours to work with
+                boxContours = cv2.findContours(edges.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+                boxContours = imutils.grab_contours(boxContours)
+
+                # try finding the contour with the largest area
+                try:
+                    # using the boxContours list, finds biggest in terms of area, fits rect to that area
+                    target = max(boxContours, key = cv2.contourArea)
+                    targetBox = cv2.minAreaRect(target)
+
+                    # get a calibrated focal length for cozmo camera, first pass only
+                    if calibrated == False:
+                        focalLength = (targetBox[1][0] * KNOWN_DISTANCE) / KNOWN_WIDTH
+                        calibrated = True
+
+                    # find distance to object based on:
+                    # manually set KNOWN_WIDTH (earlier in code, starting contour width)
+                    # focalLength (calculated on the first pass, scale factor)
+                    # targetBox[1][0], which is this frame's contour width
+                    # scale factor * (starting width / current width)
+                    currentDistance = focalLength * (KNOWN_WIDTH / targetBox[1][0])
+
+                    # draw bounding box
+                    box = cv2.boxPoints(targetBox)
+                    box = np.int0(box)
+                    boxImg = cv2.drawContours(last_im.copy(), [box], -1, (255, 255, 150), 2)
+
+                    # add text below the bounding box
+                    cv2.putText(boxImg, "%.2fin" % (currentDistance),
+                            (boxImg.shape[1] - 200, boxImg.shape[0] - 20),
+                            cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 150), 2)
+
+                    im_both = np.vstack((last_im, boxImg))
+
+                # if no contours are available
+                except ValueError:
+                    print("No object detected")
             
         
             # copying the image surface object 
