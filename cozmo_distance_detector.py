@@ -123,7 +123,7 @@ def pycozmo_program(cli: pycozmo.client.Client):
             cropped = (foreground //255) * edges
 
             # DISTANCE DETECTION
-            # from https://www.pyimagesearch.com/2015/01/19/find-distance-camera-objectmarker-using-python-opencv/
+            # referenced https://www.pyimagesearch.com/2015/01/19/find-distance-camera-objectmarker-using-python-opencv/
             # create a list of contours to work with
             boxContours = cv.findContours(edges.copy(), cv.RETR_LIST, cv.CHAIN_APPROX_SIMPLE)
             boxContours = imutils.grab_contours(boxContours)
