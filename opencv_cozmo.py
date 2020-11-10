@@ -170,7 +170,6 @@ def pycozmo_program(cli: pycozmo.client.Client):
                 grnd, edges = CheckGround(last_im.copy())
                 im_both = np.vstack((last_im, grnd))
 
-            elif(analysis_method == "edge"):
                 im2 = last_im.copy()
                 gray = cv2.cvtColor(im2, cv2.COLOR_BGR2GRAY)
 
@@ -222,7 +221,7 @@ def pycozmo_program(cli: pycozmo.client.Client):
                     # draw bounding box
                     box = cv2.boxPoints(targetBox)
                     box = np.int0(box)
-                    boxImg = cv2.drawContours(last_im.copy(), [box], -1, (255, 255, 150), 2)
+                    boxImg = cv2.drawContours(grnd.copy(), [box], -1, (255, 255, 150), 2)
 
                     # add text below the bounding box
                     cv2.putText(boxImg, "%.2fin" % (currentDistance),
