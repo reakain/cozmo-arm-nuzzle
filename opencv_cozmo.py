@@ -18,7 +18,7 @@ import imutils
 from yolo import YOLO
 
 # ground, yolo, edge
-analysis_method = "ground"
+analysis_method = "yolo"
 
 
 # Last image, received from the robot.
@@ -163,7 +163,8 @@ def pycozmo_program(cli: pycozmo.client.Client):
             display_surface.fill(white) 
 
             if(analysis_method == "yolo"):
-                detect_im = yolo.analyze_image(last_im.copy())
+                grnd, edges = CheckGround(last_im.copy())
+                detect_im = yolo.analyze_image(grnd.copy())
                 im_both = np.vstack((last_im, detect_im))
             
             elif(analysis_method == "ground"):
