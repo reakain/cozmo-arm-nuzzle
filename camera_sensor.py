@@ -5,14 +5,14 @@ import numpy as np
 from yolo import YOLO
 
 class CameraSensor:
-    def __init__(self, cli, target_name):
+    def __init__(self, cli, target_name_file):
         #self.yolo = YOLO("./yolo-coco/coco.names","./yolo-coco/yolov3.weights",
-        self.yolo = YOLO(target_name,"./yolo-coco/yolov3.weights",
+        self.yolo = YOLO(target_name_file,"./yolo-coco/yolov3.weights",
         "./yolo-coco/yolov3.cfg",0.5,0.3)
         self.last_im = np.zeros((320,240,3), np.uint8)
         self.updated = False
         self.cli = cli
-        self.cli.add_handler(pycozmo.event.EvtNewRawCameraImage, camera.on_camera_image)
+        self.cli.add_handler(pycozmo.event.EvtNewRawCameraImage, self.on_camera_image)
         #self.target = target
 
 
@@ -28,9 +28,9 @@ class CameraSensor:
         self.updated = True
 
     def find_target(self):
-        if updated:
+        if self.updated:
             # Get last image.
-            updated = False
+            self.updated = False
             # YOLO
             detect_im = yolo.analyze_image(last_im.copy())
 
@@ -46,4 +46,5 @@ class CameraSensor:
 
     def get_offset(self):
         # Do the stuff to get the offset from center 
+        # Positive => right of center, negative => left of center
         return 1.0

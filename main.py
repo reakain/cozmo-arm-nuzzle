@@ -44,13 +44,15 @@ def main():
         if(controller.drive_to_target()):
             # If made it to the target...
             emote.act_happy()
+            
+            # Nudge/Nuzzle the person
+            controller.nuzzle_target()
         else:
             # Else be sad and quit
             emote.act_sad()
             break
 
-        # Nudge/Nuzzle the person
-        controller.nuzzle_target()
+        
 
 
             
