@@ -71,6 +71,20 @@ class CozmoController:
 
     def nuzzle_target(self):
         # TODO: Add nuzzling behavior
+        # Lift shovel
+        self.cli.set_lift_height(pycozmo.robot.MAX_LIFT_HEIGHT.inches)
+        # Drive in a bit
+        self.cli.drive_wheels(100, 100, lwheel_acc=999, rwheel_acc=999, duration = 0.3)
+        # Bop with shovel
+        self.cli.set_lift_height((pycozmo.robot.MAX_LIFT_HEIGHT.inches - pycozmo.robot.MIN_LIFT_HEIGHT.inches)/2 + pycozmo.robot.MIN_LIFT_HEIGHT.inches)
+        # TODO: Add a wait period?
+        self.cli.set_lift_height(pycozmo.robot.MAX_LIFT_HEIGHT.inches)
+        # TODO: smile maybe
+        # Drive back out
+        self.cli.drive_wheels(-100, -100, lwheel_acc=999, rwheel_acc=999, duration = 0.3)
+        # Lower shovel
+        self.cli.set_lift_height(pycozmo.robot.MIN_LIFT_HEIGHT.inches)
+        # TODO: wiggle/smile?
         return
 
     
