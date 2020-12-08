@@ -28,7 +28,11 @@ def main():
         # Setup controller
         controller = CozmoController(cli,camera)
 
-        # Drive off charger
+        cli.set_head_angle(angle = 0.6)
+
+        # Drive off charger (call twice)
+        # Get to charger edge, override cliff detector
+        controller.drive_off_charger()
         controller.drive_off_charger()
 
         # Check for target
