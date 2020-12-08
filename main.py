@@ -39,6 +39,7 @@ def main():
         if(not camera.find_target()):
             # If no target, make a sad face and quit
             emote.act_sad()
+            print("no target found")
             #break
 
         # Center the target

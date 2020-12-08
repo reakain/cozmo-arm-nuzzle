@@ -17,7 +17,9 @@ class CozmoController:
         #if(pkt.status == pycozmo.event.STATUS_EVENTS.
 
     def on_cliff_detected(self, cli, state: bool):
-        # TODO: test if this works
+        # This works. Disabled the print/backup for driving off charger
+        # if it doesn't back up, then the next drive_wheels will
+        # cause Cozmo to fling itself into the abyss
         self.cliff_detected = state
         if state:
             self.cli.stop_all_motors()
@@ -31,7 +33,7 @@ class CozmoController:
         print("Robot poked.")
 
     def drive_off_charger(self):
-        # TODO: tune in if this is enough drive to get off charger
+        # Drives off charger, call twice to get past cliff detection
         driving_off_charger = True
         self.cli.drive_wheels(100, 100, lwheel_acc=999, rwheel_acc=999, duration = 1)
         driving_off_charger = False
