@@ -34,6 +34,7 @@ class CameraSensor:
             # YOLO
             detect_im = yolo.analyze_image(last_im.copy())
 
+            # TODO: understand the yolo enough to know if it actually found our target in the image...
             # If the target is in the image...
             # if ()
             #     return True
@@ -45,6 +46,7 @@ class CameraSensor:
 
 
     def get_offset(self):
+        # TODO: calculate some kind of offset for the target from center of image
         # Do the stuff to get the offset from center 
         # Positive => right of center, negative => left of center
         return 1.0

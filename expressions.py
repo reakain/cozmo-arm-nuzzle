@@ -7,14 +7,17 @@ class Expressions:
         self.cli = cli
 
     def act_sad(self):
+        # Add in the action names
         self.do_action('')
 
     def act_happy(self):
+        # Add in the action names
         self.do_action('')
 
     def do_action(self, option):
-        self.cli.play_anim(option)
-        self.cli.wait_for(pycozmo.event.EvtAnimationCompleted)
+        if option in cli.animation_groups:
+            self.cli.play_anim_group(option)
+            self.cli.wait_for(pycozmo.event.EvtAnimationCompleted)
 
     def sad_face(self):
         self.generate_face(pycozmo.expressions.Sadness())
