@@ -17,7 +17,7 @@ def main():
     with pycozmo.connect() as cli:
         # Setup camera
         cli.enable_camera(enable=True, color=True)
-        camera = CameraSensor(cli,'person')
+        camera = CameraSensor(cli)
         #cli.add_handler(pycozmo.event.EvtNewRawCameraImage, camera.on_camera_image)
 
         # Setup Expressions
