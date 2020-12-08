@@ -5,9 +5,9 @@ import numpy as np
 from yolo import YOLO
 
 class CameraSensor:
-    def __init__(self, cli):
+    def __init__(self, cli, target_name_file):
         #self.yolo = YOLO("./yolo-coco/coco.names","./yolo-coco/yolov3.weights",
-        self.yolo = YOLO("./yolo-coco/coco.names","./yolo-coco/yolov3.weights",
+        self.yolo = YOLO(target_name_file,"./yolo-coco/yolov3.weights",
         "./yolo-coco/yolov3.cfg",0.5,0.3)
         self.last_im = np.zeros((320,240,3), np.uint8)
         self.updated = False
