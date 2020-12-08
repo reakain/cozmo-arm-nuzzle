@@ -17,7 +17,7 @@ class CameraSensor:
 
 
     def on_camera_image(self, cli, new_im):
-    """ Handle new images, coming from the robot. """
+        """ Handle new images, coming from the robot. """
         del cli
 
         # from: https://stackoverflow.com/a/14140796

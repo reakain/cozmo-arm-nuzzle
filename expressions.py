@@ -8,11 +8,14 @@ class Expressions:
 
     def act_sad(self):
         # Add in the action names
-        self.do_action('')
+        self.do_action('CodeLabDejected')
+
+    def act_frustrated(self):
+        self.do_action('CodeLabFrustrated')
 
     def act_happy(self):
         # Add in the action names
-        self.do_action('')
+        self.do_action('CodeLabHappy')
 
     def do_action(self, option):
         if option in self.cli.animation_groups:

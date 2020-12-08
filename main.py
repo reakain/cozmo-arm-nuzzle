@@ -3,7 +3,7 @@
 import time
 
 import pycozmo
-import pygame
+#import pygame
 
 import numpy as np
 import cv2
@@ -17,7 +17,7 @@ def main():
     with pycozmo.connect() as cli:
         # Setup camera
         cli.enable_camera(enable=True, color=True)
-        camera = CameraSensor(cli)
+        camera = CameraSensor(cli,'target_name')
         #cli.add_handler(pycozmo.event.EvtNewRawCameraImage, camera.on_camera_image)
 
         # Setup Expressions
@@ -38,7 +38,7 @@ def main():
             # If no target, make a sad face and quit
             emote.act_sad()
             print("no target found")
-            break
+            return
 
         # Center the target
         controller.center_target()
@@ -54,7 +54,7 @@ def main():
         else:
             # Else be sad and quit
             emote.act_sad()
-            break
+            return
 
         
 
