@@ -16,18 +16,26 @@ class CozmoController:
         #if(pkt.status == pycozmo.event.STATUS_EVENTS.
 
     def on_cliff_detected(self, cli, state: bool):
-        # TODO: test if this works
+        # This works. Disabled the print/backup for driving off charger
+        # if it doesn't back up, then the next drive_wheels will
+        # cause Cozmo to fling itself into the abyss
         self.cliff_detected = state
-        if(state):
+        if state:
             self.cli.stop_all_motors()
+            if driving_off_charger == False:
+                # back up, say that cliff is found
+                self.cli.drive_wheels(-100, -100, lwheel_acc=999, rwheel_acc=999, duration = 1)
+                print("Cozmo has detected a cliff!")
 
     def on_robot_poked(self, cli, pkt: pycozmo.protocol_encoder.RobotPoked):
         # TODO: maybe this will work for sensing?
         print("Robot poked.")
 
     def drive_off_charger(self):
-        # TODO: tune in if this is enough drive to get off charger
-        self.cli.drive_wheels(100, 100, lwheel_acc=999, rwheel_acc=999, duration = 0.3)
+        # Drives off charger, call twice to get past cliff detection
+        driving_off_charger = True
+        self.cli.drive_wheels(100, 100, lwheel_acc=999, rwheel_acc=999, duration = 1)
+        driving_off_charger = False
         return
 
     def center_target(self):
