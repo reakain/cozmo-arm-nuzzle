@@ -27,6 +27,10 @@ class YOLO:
 
         # load our YOLO object detector trained on COCO dataset (80 classes)
         print("[INFO] loading YOLO from disk...")
+        
+        # if this line breaks, redownload weights file
+        # stack exchange on issue: https://tinyurl.com/y6rw5jvx
+        # redownload link (will initiate 200MB download): https://tinyurl.com/yyey45r4
         self.net = cv2.dnn.readNetFromDarknet(self.configPath, self.weightsPath)
 
         # determine only the *output* layer names that we need from YOLO
