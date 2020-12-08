@@ -21,19 +21,23 @@ def main():
         #cli.add_handler(pycozmo.event.EvtNewRawCameraImage, camera.on_camera_image)
 
         # Setup Expressions
+        # if load_anims breaks, run 'pycozmo_resources.py download'
         cli.load_anims()
         emote = Expressions(cli)
 
         # Setup controller
         controller = CozmoController(cli,camera)
 
-        # Drive off charger
+        # Drive off charger (call twice)
+        # Get to charger edge, override cliff detector
+        controller.drive_off_charger()
         controller.drive_off_charger()
 
         # Check for target
         if(not camera.find_target()):
             # If no target, make a sad face and quit
             emote.act_sad()
+            print("no target found")
             break
 
         # Center the target
