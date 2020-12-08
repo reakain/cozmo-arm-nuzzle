@@ -15,7 +15,7 @@ class Expressions:
         self.do_action('')
 
     def do_action(self, option):
-        if option in cli.animation_groups:
+        if option in self.cli.animation_groups:
             self.cli.play_anim_group(option)
             self.cli.wait_for(pycozmo.event.EvtAnimationCompleted)
 
