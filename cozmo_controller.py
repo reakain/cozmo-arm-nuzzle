@@ -14,14 +14,14 @@ class CozmoController:
         #self.cli.add_handler(pycozmo.event.EvtRobotStateUpdated, self.on_state_update)
         self.cli.add_handler(pycozmo.event.EvtCliffDetectedChange, self.on_cliff_detected)
         # self.cli.add_handler(pycozmo.protocol_encoder.RobotPoked, self.on_robot_poked)
-        self.cli.add_handler(pycozmo.event.EvtRobotMovingChange, self.on_robot_moving_change)
-        self.cli.add_handler(pycozmo.event.EvtRobotWheelsMovingChange, self.on_wheels_moving_change)
+        #self.cli.add_handler(pycozmo.event.EvtRobotMovingChange, self.on_robot_moving_change)
+        #self.cli.add_handler(pycozmo.event.EvtRobotWheelsMovingChange, self.on_wheels_moving_change)
         # self.cli.add_handler(pycozmo.event.EvtRobotBodyAccModeChange, self.on_body_acc_mode_change)
         self.cliff_detected = False
-        self.robot_moving = False
-        self.wheels_moving = False
+        #self.robot_moving = False
+        #self.wheels_moving = False
         self.driving_off_charger = False
-        self.looking_for_target = False
+        #self.looking_for_target = False
         self.on_charger = True
         self.turning = False
         self.turning_direction = 0
@@ -33,22 +33,22 @@ class CozmoController:
     #def on_robot_state(self, cli, pkt: pycozmo.protocol_encoder.RobotState):
         #if(pkt.status == pycozmo.event.STATUS_EVENTS.
 
-    def on_body_acc_mode_change(self, cli, state):
-        print("Accel mode does nothing!", flush=True)
-        print("Accel mode is " + state, flush=True)
+    # def on_body_acc_mode_change(self, cli, state):
+    #     print("Accel mode does nothing!", flush=True)
+    #     print("Accel mode is " + state, flush=True)
 
-    def on_robot_moving_change(self, cli, state: bool):
-        self.robot_moving = state
+    # def on_robot_moving_change(self, cli, state: bool):
+    #     self.robot_moving = state
 
-        #print("Robot is moving: " + str(state), flush=True)
+    #     #print("Robot is moving: " + str(state), flush=True)
 
-    def on_wheels_moving_change(self, cli, state: bool):
-        # clear out bump tracker of any bumps on start moving
-        #if(state and not self.wheels_moving):
-        #    self.bump_tracker.has_bumped()
+    # def on_wheels_moving_change(self, cli, state: bool):
+    #     # clear out bump tracker of any bumps on start moving
+    #     #if(state and not self.wheels_moving):
+    #     #    self.bump_tracker.has_bumped()
         
-        self.wheels_moving = state
-        #print("Wheels moving: " + str(state), flush=True)
+    #     self.wheels_moving = state
+    #     #print("Wheels moving: " + str(state), flush=True)
 
     def on_cliff_detected(self, cli, state: bool):
         # This works. Disabled the print/backup for driving off charger
@@ -81,14 +81,14 @@ class CozmoController:
     def drive_off_charger(self):
         # Drives off charger, call twice to get past cliff detection
         self.driving_off_charger = True
-        self.cli.drive_wheels(100, 100, lwheel_acc=999, rwheel_acc=999, duration= 2)
+        self.cli.drive_wheels(200, 200, lwheel_acc=999, rwheel_acc=999)
         #target = pycozmo.util.Pose(1000, 00.0, 0.0, angle_z=pycozmo.util.Angle(degrees=0.0))
         #self.cli.go_to_pose(target, relative_to_robot=True)
         self.get_off_charger_time = time.time()
 
     def is_on_charger(self):
         if(self.driving_off_charger):
-            if((time.time() - self.get_off_charger_time) > 3):
+            if((time.time() - self.get_off_charger_time) > 1.5):
                 self.cli.stop_all_motors()
                 self.driving_off_charger = False
                 self.on_charger = False
@@ -116,19 +116,19 @@ class CozmoController:
     #     return False
 
     # duration of 0.4 is ~ 45 degrees
-    def rotate_left (self, dur):
-        self.cli.drive_wheels(-100, 100, lwheel_acc=999, rwheel_acc=999, duration = dur)
-        if(self.camera.find_target()):
-            return True
-        else:
-            return False
+    # def rotate_left (self, dur):
+    #     self.cli.drive_wheels(-100, 100, lwheel_acc=999, rwheel_acc=999, duration = dur)
+    #     if(self.camera.find_target()):
+    #         return True
+    #     else:
+    #         return False
 
-    def rotate_right (self, dur):
-        self.cli.drive_wheels(100, -100, lwheel_acc=999, rwheel_acc=999, duration = dur)
-        if(self.camera.find_target()):
-            return True
-        else:
-            return False
+    # def rotate_right (self, dur):
+    #     self.cli.drive_wheels(100, -100, lwheel_acc=999, rwheel_acc=999, duration = dur)
+    #     if(self.camera.find_target()):
+    #         return True
+    #     else:
+    #         return False
 
     def turn_in_place(self,direction):
         self.turning = True
@@ -193,53 +193,53 @@ class CozmoController:
         self.cli.drive_wheels(-100,-100,duration=0.075)
 
 
-    def center_target(self):
-        # centers target. Note that the rotate_right/left methods
-        # grab a new yolo'd frame to work with, so no worries there!
-        print("start centering", flush=True)
-        not_centered = True
-        while(not_centered):
-            offset = self.camera.get_offset()
-            if(offset > self.tolerance):
-                # Drive right
-                self.rotate_right(0.075)
-            elif(offset < -self.tolerance):
-                # Drive left
-                self.rotate_left(0.075)
-            else:
-                not_centered = False
+    # def center_target(self):
+    #     # centers target. Note that the rotate_right/left methods
+    #     # grab a new yolo'd frame to work with, so no worries there!
+    #     print("start centering", flush=True)
+    #     not_centered = True
+    #     while(not_centered):
+    #         offset = self.camera.get_offset()
+    #         if(offset > self.tolerance):
+    #             # Drive right
+    #             self.rotate_right(0.075)
+    #         elif(offset < -self.tolerance):
+    #             # Drive left
+    #             self.rotate_left(0.075)
+    #         else:
+    #             not_centered = False
             
-    def is_centered(self):
-        offset = self.camera.get_offset()
-        return (offset < self.tolerance and offset > -self.tolerance)
+    # def is_centered(self):
+    #     offset = self.camera.get_offset()
+    #     return (offset < self.tolerance and offset > -self.tolerance)
 
-    def sense_target(self):
-        # TODO: Figure out target sensing
-        #accel_bump = self.bump_tracker.has_bumped()
-        #return self.wheels_moving and accel_bump
-        print("sensing target", flush=True)
-        return self.wheels_moving and not self.robot_moving
+    # def sense_target(self):
+    #     # TODO: Figure out target sensing
+    #     #accel_bump = self.bump_tracker.has_bumped()
+    #     #return self.wheels_moving and accel_bump
+    #     print("sensing target", flush=True)
+    #     return self.wheels_moving and not self.robot_moving
 
-    def drive_to_target(self):
-        print("going totarget", flush=True)
-        # self.looking_for_target = True
-        # # While we haven't sensed the target...
-        # #while(not self.sense_target()):
-        # while(self.looking_for_target):
-        #     # if we havefound a cliff...
-        #     if(self.cliff_detected):
-        #         # Stop driving
-        #         self.cli.stop_all_motors()
-        #         self.looking_for_target = False
-        #         return False
-        #     # if we're still centered..
-        #     if(self.is_centered()):
-        #         self.cli.drive_wheels(100,100,lwheel_acc=999, rwheel_acc=999,duration=0.4)
-        #     else:
-        #         self.center_target()
-        # # return true if reached target
-        # return True
-        # # return false otherwise
+    # def drive_to_target(self):
+    #     print("going totarget", flush=True)
+    #     self.looking_for_target = True
+    #     # While we haven't sensed the target...
+    #     #while(not self.sense_target()):
+    #     while(self.looking_for_target):
+    #         # if we havefound a cliff...
+    #         if(self.cliff_detected):
+    #             # Stop driving
+    #             self.cli.stop_all_motors()
+    #             self.looking_for_target = False
+    #             return False
+    #         # if we're still centered..
+    #         if(self.is_centered()):
+    #             self.cli.drive_wheels(100,100,lwheel_acc=999, rwheel_acc=999,duration=0.4)
+    #         else:
+    #             self.center_target()
+    #     # return true if reached target
+    #     return True
+    #     # return false otherwise
 
     def nuzzle_target(self):
         print("start nuzzling", flush=True)

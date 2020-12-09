@@ -5,6 +5,8 @@ import numpy as np
 class Expressions:
     def __init__(self, cli):
         self.cli = cli
+        self.anim_running = False
+        self.cli.add_handler(pycozmo.event.EvtAnimationCompleted, self.on_anim_complete)
 
     def act_sad(self):
         # Add in the action names
@@ -20,7 +22,11 @@ class Expressions:
     def do_action(self, option):
         if option in self.cli.animation_groups:
             self.cli.play_anim_group(option)
-            self.cli.wait_for(pycozmo.event.EvtAnimationCompleted)
+            self.anim_running = True
+            #self.cli.wait_for(pycozmo.event.EvtAnimationCompleted)
+
+    def on_anim_complete(self, cli):
+        self.anim_running = False
 
     def sad_face(self):
         self.generate_face(pycozmo.expressions.Sadness())

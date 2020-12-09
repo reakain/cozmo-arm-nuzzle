@@ -9,17 +9,21 @@ import os
 
 
 class YOLO:
-    def __init__(self, names,weights,config,confidence,threshold):
+    def __init__(self, names,weights,config,confidence,threshold, target_name = "all"):
         self.confidence = confidence
         self.threshold = threshold
         # load the COCO class labels our YOLO model was trained on
         self.labelsPath = names
         self.LABELS = open(self.labelsPath).read().strip().split("\n")
+        if(target_name != "all" and target_name in self.LABELS):
+            self.target_id = self.LABELS.index(target_name)
+        else:
+            self.target_id = -1
 
         # initialize a list of colors to represent each possible class label
-        np.random.seed(42)
-        self.COLORS = np.random.randint(0, 255, size=(len(self.LABELS), 3),
-            dtype="uint8")
+        #np.random.seed(42)
+        #self.COLORS = np.random.randint(0, 255, size=(len(self.LABELS), 3),
+        #    dtype="uint8")
 
         # derive the paths to the YOLO weights and model configuration
         self.weightsPath = weights
@@ -52,13 +56,13 @@ class YOLO:
         end = time.time()
 
         # show timing information on YOLO
-        print("[INFO] YOLO took {:.6f} seconds".format(end - start))
+        #print("[INFO] YOLO took {:.6f} seconds".format(end - start))
 
         # initialize our lists of detected bounding boxes, confidences, and
         # class IDs, respectively
         boxes = []
         confidences = []
-        classIDs = []
+        #classIDs = []
 
         # loop over each of the layer outputs
         for output in layerOutputs:
@@ -68,35 +72,50 @@ class YOLO:
                 # the current object detection
                 scores = detection[5:]
                 classID = np.argmax(scores)
-                confidence = scores[classID]
 
-                # filter out weak predictions by ensuring the detected
-                # probability is greater than the minimum probability
-                if confidence > self.confidence:
-                    # scale the bounding box coordinates back relative to the
-                    # size of the image, keeping in mind that YOLO actually
-                    # returns the center (x, y)-coordinates of the bounding
-                    # box followed by the boxes' width and height
-                    box = detection[0:4] * np.array([W, H, W, H])
-                    (centerX, centerY, width, height) = box.astype("int")
+                # only look out features that match our target
+                if(self.target_id == -1 or self.target_id == classID):
 
-                    # use the center (x, y)-coordinates to derive the top and
-                    # and left corner of the bounding box
-                    x = int(centerX - (width / 2))
-                    y = int(centerY - (height / 2))
+                    confidence = scores[classID]
 
-                    # update our list of bounding box coordinates, confidences,
-                    # and class IDs
-                    boxes.append([x, y, int(width), int(height)])
-                    confidences.append(float(confidence))
-                    classIDs.append(classID)
+                    # filter out weak predictions by ensuring the detected
+                    # probability is greater than the minimum probability
+                    if confidence > self.confidence:
+                        # scale the bounding box coordinates back relative to the
+                        # size of the image, keeping in mind that YOLO actually
+                        # returns the center (x, y)-coordinates of the bounding
+                        # box followed by the boxes' width and height
+                        box = detection[0:4] * np.array([W, H, W, H])
+                        (centerX, centerY, width, height) = box.astype("int")
 
-                    # RETURNS COORDINATES
-                    # returns the coordinates and confidence of the box
-                    return([centerX, centerY, int(width), int(height), float(confidence)])
+                        # use the center (x, y)-coordinates to derive the top and
+                        # and left corner of the bounding box
+                        x = int(centerX - (width / 2))
+                        y = int(centerY - (height / 2))
+
+                        # update our list of bounding box coordinates, confidences,
+                        # and class IDs
+                        boxes.append([x, y, int(width), int(height)])
+                        confidences.append(float(confidence))
+                        #classIDs.append(classID)
+
+                        # RETURNS COORDINATES
+                        # returns the coordinates and confidence of the box
+                        #return([centerX, centerY, int(width), int(height), float(confidence)])
+
+        
+
+        idxs = cv2.dnn.NMSBoxes(boxes, confidences, self.confidence, self.threshold)
+
+        # ensure at least one detection exists
+        if len(idxs) > 0:
+            for i in idxs.flatten():
+                return( [boxes[i][0], boxes[i][1], boxes[i][2], boxes[i][3], confidences[i]])
+        #    # loop over the indexes we are keeping
+        #    for i in idxs.flatten():
 
         # IF NO TARGET FOUND, RETURN NONE
-        return
+        return None
 
         # kept the image stuff in case we want it later
 

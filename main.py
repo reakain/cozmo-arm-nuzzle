@@ -17,6 +17,7 @@ from yolo import YOLO
 from camera_sensor import CameraSensor
 from expressions import Expressions
 from cozmo_controller import CozmoController
+from accel_tracker import BumpTracker
 
 class ActionType(enum.Enum):
     
@@ -86,7 +87,9 @@ def main():
 
     # Setup camera
     cli.enable_camera(enable=True, color=True)
-    camera = CameraSensor(cli,'target_name')
+    time.sleep(2.0)
+    #camera = CameraSensor(cli,'target_name')
+    camera = CameraSensor(cli)
 
     # Setup Expressions
     # if load_anims breaks, run 'pycozmo_resources.py download'
@@ -96,6 +99,10 @@ def main():
     # Setup controller
     controller = CozmoController(cli,camera)
 
+    # Setup Bump tracking
+    bump_tracker = BumpTracker()
+    cli.add_handler(pycozmo.protocol_encoder.RobotState, bump_tracker.on_new_measurement)
+
     # initialize the head angle
     cli.set_head_angle(angle = 0.6)
 
@@ -103,15 +110,19 @@ def main():
     checked_left = False
     tolerance = 2.0
 
-    
+    # Wait to stabilize.
+    time.sleep(2.0)
 
     while True:
         if controller.cliff_detected and current_step != "Idle":
             cli.stop_all_motors()
             log_message = "Found a cliff!"
             controller.bump_back()
-            emote.act_frustrated()
+            emote.act_sad()
             current_step = "Idle"
+
+        elif emote.anim_running:
+            pass
 
         elif current_step == "Start":
             log_message = "Moving off charger..."
@@ -127,7 +138,7 @@ def main():
 
         elif current_step == "Find Target":
             log_message = "Searching for friend..."
-            if(not controller.turning and camera.find_target()):
+            if(not controller.turning and camera.has_target()):
                 emote.act_happy()
                 current_step = "Center on Target"
                 log_message = "Found friend!"
@@ -140,7 +151,7 @@ def main():
                 elif((time.time() - controller.turning_start_time) > 0.4):
                     controller.stop_turning()
                     checked_right = True
-                elif(camera.find_target()):
+                elif(camera.has_target()):
                     controller.stop_turning()
                     emote.act_happy()
                     current_step = "Center on Target"
@@ -152,12 +163,11 @@ def main():
                 elif((time.time() - controller.turning_start_time) > 0.8):
                     controller.stop_turning()
                     checked_left = True
-                elif(camera.find_target()):
+                elif(camera.has_target()):
                     controller.stop_turning()
                     emote.act_happy()
                     current_step = "Center on Target"
                     log_message = "Found friend!"
-
             else:
                 log_message = "Couldn't find friend..."
                 current_step = "Failed"
@@ -166,22 +176,29 @@ def main():
         elif current_step == "Center on Target":
             log_message = "Facing new friend..."
             if(controller.turning):
-                if(not camera.find_target()):
+                if(not camera.has_target()):
                     controller.turn_in_place(-controller.turning_direction)
 
-            offset = camera.get_offset()
-            if(offset > tolerance):
-                if(not controller.turning or controller.turning_direction < 0):
-                    # Drive right
-                    controller.turn_in_place(1)
-            elif(offset < -tolerance):
-                if (not controller.turning or controller.turning_direction > 0):
-                    # Drive left
-                    controller.turn_in_place(-1)
-            else:
+            offset_dir = camera.get_offset_dir(tolerance)
+            if(offset_dir == 0):
                 controller.stop_turning()
                 log_message = "Centered!"
                 current_step = "Go To Target"
+            elif(not controller.turning or controller.turning_direction != offset_dir):
+                controller.turn_in_place(offset_dir)
+
+            # if(offset > tolerance):
+            #     if(not controller.turning or controller.turning_direction < 0):
+            #         # Drive right
+            #         controller.turn_in_place(1)
+            # elif(offset < -tolerance):
+            #     if (not controller.turning or controller.turning_direction > 0):
+            #         # Drive left
+            #         controller.turn_in_place(-1)
+            # else:
+            #     controller.stop_turning()
+            #     log_message = "Centered!"
+            #     current_step = "Go To Target"
 
         elif current_step == "Go To Target":
             log_message = "Going to friend!"
@@ -190,7 +207,7 @@ def main():
                 controller.bump_back()
                 log_message = "Found ledge!"
                 current_step = "Failed"
-            elif(controller.is_driving and not cli.robot_moving):
+            elif(controller.is_driving and not bump_tracker.has_bumped()):
                 controller.stop_driving()
                 controller.bump_back()
                 emote.act_happy()
@@ -198,6 +215,7 @@ def main():
                 current_step = "Nudge Target"
             elif(not controller.is_driving):
                 controller.drive_forward()
+                bump_tracker.start_tracking()
 
         elif current_step == "Nudge Target":
             log_message = "Getting attention..."
@@ -220,31 +238,29 @@ def main():
 
 
         # Update display
-        if(camera.updated):
-            camera.updated = False
-            # completely fill the surface object 
-            # with white colour 
-            display_surface.fill(white) 
-            # copying the image surface object 
-            # to the display surface object at 
-            # (0, 0) coordinate. 
-            display_surface.blit(camera.get_pygame_image(), (0, 0)) 
-            # Add text label
-            # create a text suface object,
-            # on which text is drawn on it.
-            text = font.render(log_message, True, green, black)
-            
-            # create a rectangular object for the
-            # text surface object
-            textRect = text.get_rect()
-            
-            # set the center of the rectangular object.
-            textRect.center = (textRect.w/2, textRect.h/2)
-            # Draws the surface object to the screen.   
-            display_surface.blit(text, textRect)
+        # completely fill the surface object 
+        # with white colour 
+        display_surface.fill(white) 
+        # copying the image surface object 
+        # to the display surface object at 
+        # (0, 0) coordinate. 
+        display_surface.blit(camera.get_output_img(), (0, 0)) 
+        # Add text label
+        # create a text suface object,
+        # on which text is drawn on it.
+        text = font.render(log_message, True, green, black)
+        
+        # create a rectangular object for the
+        # text surface object
+        textRect = text.get_rect()
+        
+        # set the center of the rectangular object.
+        textRect.center = (textRect.w/2, textRect.h/2)
+        # Draws the surface object to the screen.   
+        display_surface.blit(text, textRect)
 
-            # update display
-            pygame.display.update()
+        # update display
+        pygame.display.update()
 
         
         # iterate over the list of Event objects 
