@@ -1,22 +1,24 @@
 #!/usr/bin/env python
 import pycozmo
 import numpy as np
+from accel_tracker import BumpTracker
 
 class CozmoController:
     def __init__(self, cli, camera, tolerance = 2.0):
         self.cli = cli
         self.camera = camera
+        self.bump_tracker = BumpTracker()
         self.tolerance = tolerance
-        #self.cli.add_handler(pycozmo.protocol_encoder.RobotState, self.on_robot_state)
+        #self.cli.add_handler(pycozmo.protocol_encoder.RobotState, self.bump_tracker.on_new_measurement)
+        #self.cli.add_handler(pycozmo.event.EvtRobotStateUpdated, self.on_state_update)
         self.cli.add_handler(pycozmo.event.EvtCliffDetectedChange, self.on_cliff_detected)
-        self.cli.add_handler(pycozmo.protocol_encoder.RobotPoked, self.on_robot_poked)
+        # self.cli.add_handler(pycozmo.protocol_encoder.RobotPoked, self.on_robot_poked)
         self.cli.add_handler(pycozmo.event.EvtRobotMovingChange, self.on_robot_moving_change)
         self.cli.add_handler(pycozmo.event.EvtRobotWheelsMovingChange, self.on_wheels_moving_change)
-        self.cli.add_handler(pycozmo.event.EvtRobotBodyAccModeChange, self.on_body_acc_mode_change)
+        # self.cli.add_handler(pycozmo.event.EvtRobotBodyAccModeChange, self.on_body_acc_mode_change)
         self.cliff_detected = False
         self.robot_moving = False
         self.wheels_moving = False
-
         self.driving_off_charger = False
 
     #def on_robot_state(self, cli, pkt: pycozmo.protocol_encoder.RobotState):
@@ -31,6 +33,10 @@ class CozmoController:
         print("Robot is moving: " + str(state), flush=True)
 
     def on_wheels_moving_change(self, cli, state: bool):
+        # clear out bump tracker of any bumps on start moving
+        #if(state and not self.wheels_moving):
+        #    self.bump_tracker.has_bumped()
+        
         self.wheels_moving = state
         print("Wheels moving: " + str(state), flush=True)
 
@@ -58,6 +64,7 @@ class CozmoController:
         return
 
     def find_target(self):
+        print("finding person", flush=True)
         if(self.camera.find_target()):
             return True
 
@@ -130,6 +137,7 @@ class CozmoController:
     def center_target(self):
         # centers target. Note that the rotate_right/left methods
         # grab a new yolo'd frame to work with, so no worries there!
+        print("start centering", flush=True)
         not_centered = True
         while(not_centered):
             offset = self.camera.get_offset()
@@ -148,9 +156,13 @@ class CozmoController:
 
     def sense_target(self):
         # TODO: Figure out target sensing
+        #accel_bump = self.bump_tracker.has_bumped()
+        #return self.wheels_moving and accel_bump
+        print("sensing target", flush=True)
         return self.wheels_moving and not self.robot_moving
 
     def drive_to_target(self):
+        print("going totarget", flush=True)
         # While we haven't sensed the target...
         while(not self.sense_target()):
             # if we havefound a cliff...
@@ -160,7 +172,7 @@ class CozmoController:
                 return False
             # if we're still centered..
             if(self.is_centered()):
-                self.cli.drive_wheels(100,100)
+                self.cli.drive_wheels(100,100,lwheel_acc=999, rwheel_acc=999,duration=0.4)
             else:
                 self.center_target()
         # return true if reached target
@@ -168,6 +180,7 @@ class CozmoController:
         # return false otherwise
 
     def nuzzle_target(self):
+        print("start nuzzling", flush=True)
         # TODO: Add nuzzling behavior
         # Lift shovel
         self.cli.set_lift_height(pycozmo.robot.MAX_LIFT_HEIGHT.inches)

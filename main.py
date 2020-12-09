@@ -6,6 +6,7 @@ import pycozmo
 #import pygame
 
 import signal
+import sys
 
 import numpy as np
 import cv2
