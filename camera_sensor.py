@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import cv2
 import pycozmo
+import pygame
 import numpy as np
 from yolo import YOLO
 
@@ -29,25 +30,40 @@ class CameraSensor:
         self.updated = True
 
     def find_target(self):
-        if self.updated:
-            # Get last image.
-            self.updated = False
-            
-            # YOLO, returns [x, y, width, height, confidence]
-            self.target = self.yolo.analyze_image(self.last_im.copy())
-
-            # if target has coordinates
-            if self.target:
-                print("Person found!")
-                return True
-            
-            # if target has None
-            else:
-                print("Person not found")
-                return False
+        # Get last image.
+        #self.updated = False
         
+        # YOLO, returns [x, y, width, height, confidence]
+        self.target = self.yolo.analyze_image(self.last_im.copy())
+
+        # if target has coordinates
+        if self.target:
+            print("Person found!")
+            return True
+        
+        # if target has None
         else:
+            print("Person not found")
             return False
+        # if self.updated:
+        #     # Get last image.
+        #     self.updated = False
+            
+        #     # YOLO, returns [x, y, width, height, confidence]
+        #     self.target = self.yolo.analyze_image(self.last_im.copy())
+
+        #     # if target has coordinates
+        #     if self.target:
+        #         print("Person found!")
+        #         return True
+            
+        #     # if target has None
+        #     else:
+        #         print("Person not found")
+        #         return False
+        
+        # else:
+        #     return False
 
 
     def get_offset(self):
@@ -62,3 +78,17 @@ class CameraSensor:
 
         # this shouldn't ever be needed, but just in case
         return 0
+
+    def get_pygame_image(self):
+        cv2Image = self.last_im.copy()
+        if cv2Image.dtype.name == 'uint16':
+            cv2Image = (cv2Image / 256).astype('uint8')
+        size = cv2Image.shape[1::-1]
+        if len(cv2Image.shape) == 2:
+            cv2Image = np.repeat(cv2Image.reshape(size[1], size[0], 1), 3, axis = 2)
+            format = 'RGB'
+        else:
+            format = 'RGBA' if cv2Image.shape[2] == 4 else 'RGB'
+            cv2Image[:, :, [0, 2]] = cv2Image[:, :, [2, 0]]
+        surface = pygame.image.frombuffer(cv2Image.flatten(), size, format)
+        return surface.convert_alpha() if format == 'RGBA' else surface.convert()
