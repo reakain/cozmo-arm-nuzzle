@@ -12,6 +12,7 @@ class CozmoController:
         self.cli.add_handler(pycozmo.protocol_encoder.RobotPoked, self.on_robot_poked)
         self.cli.add_handler(pycozmo.event.EvtRobotMovingChange, self.on_robot_moving_change)
         self.cli.add_handler(pycozmo.event.EvtRobotWheelsMovingChange, self.on_wheels_moving_change)
+        self.cli.add_handler(pycozmo.event.EvtRobotBodyAccModeChange, self.on_body_acc_mode_change)
         self.cliff_detected = False
         self.robot_moving = False
         self.wheels_moving = False
@@ -20,6 +21,10 @@ class CozmoController:
 
     #def on_robot_state(self, cli, pkt: pycozmo.protocol_encoder.RobotState):
         #if(pkt.status == pycozmo.event.STATUS_EVENTS.
+
+    def on_body_acc_mode_change(self, cli, state):
+        print("Accel mode does nothing!", flush=True)
+        print("Accel mode is " + state, flush=True)
 
     def on_robot_moving_change(self, cli, state: bool):
         self.robot_moving = state
