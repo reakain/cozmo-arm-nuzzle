@@ -12,6 +12,8 @@ class CozmoController:
         self.cli.add_handler(pycozmo.protocol_encoder.RobotPoked, self.on_robot_poked)
         self.cliff_detected = False
 
+        self.driving_off_charger = False
+
     #def on_robot_state(self, cli, pkt: pycozmo.protocol_encoder.RobotState):
         #if(pkt.status == pycozmo.event.STATUS_EVENTS.
 
@@ -22,7 +24,7 @@ class CozmoController:
         self.cliff_detected = state
         if state:
             self.cli.stop_all_motors()
-            if driving_off_charger == False:
+            if self.driving_off_charger == False:
                 # back up, say that cliff is found
                 self.cli.drive_wheels(-100, -100, lwheel_acc=999, rwheel_acc=999, duration = 1)
                 print("Cozmo has detected a cliff!")
@@ -33,9 +35,9 @@ class CozmoController:
 
     def drive_off_charger(self):
         # Drives off charger, call twice to get past cliff detection
-        driving_off_charger = True
+        self.driving_off_charger = True
         self.cli.drive_wheels(100, 100, lwheel_acc=999, rwheel_acc=999, duration = 1)
-        driving_off_charger = False
+        self.driving_off_charger = False
         return
 
     def center_target(self):
