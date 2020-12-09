@@ -57,6 +57,7 @@ class CozmoController:
             return True
 
         # the elegant way wasn't working, so here's the brute force way
+        # note that duration of 0.4 is about 45 degrees
         if self.rotate_left(.4):
             return True
         if self.rotate_left(.4):
