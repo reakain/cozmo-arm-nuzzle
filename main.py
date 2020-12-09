@@ -36,7 +36,7 @@ def main():
         controller.drive_off_charger()
 
         # Check for target
-        if(not camera.find_target()):
+        if(not controller.find_target()):
             # If no target, make a sad face and quit
             emote.act_sad()
             return
