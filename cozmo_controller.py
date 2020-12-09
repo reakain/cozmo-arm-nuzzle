@@ -123,7 +123,8 @@ class CozmoController:
 
 
     def center_target(self):
-        # TODO: tune in turning
+        # centers target. Note that the rotate_right/left methods
+        # grab a new yolo'd frame to work with, so no worries there!
         not_centered = True
         while(not_centered):
             offset = self.camera.get_offset()

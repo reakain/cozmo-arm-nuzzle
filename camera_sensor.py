@@ -51,9 +51,8 @@ class CameraSensor:
 
 
     def get_offset(self):
-        # TODO: calculate some kind of offset for the target from center of image
-        # Do the stuff to get the offset from center 
-        # Positive => right of center, negative => left of center
+        # simple offset from center of ID'd object and
+        # half the width of the window (hard-coded)
 
         if self.target:
             x = self.target[0]
@@ -61,4 +60,5 @@ class CameraSensor:
 
             return offset
 
+        # this shouldn't ever be needed, but just in case
         return 0
