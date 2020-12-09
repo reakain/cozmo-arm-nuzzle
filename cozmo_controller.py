@@ -81,7 +81,7 @@ class CozmoController:
     def drive_off_charger(self):
         # Drives off charger, call twice to get past cliff detection
         self.driving_off_charger = True
-        self.cli.drive_wheels(200, 200, lwheel_acc=999, rwheel_acc=999)
+        self.cli.drive_wheels(100, 100, lwheel_acc=999, rwheel_acc=999, duration= 1)
         #target = pycozmo.util.Pose(1000, 00.0, 0.0, angle_z=pycozmo.util.Angle(degrees=0.0))
         #self.cli.go_to_pose(target, relative_to_robot=True)
         self.get_off_charger_time = time.time()
@@ -193,6 +193,7 @@ class CozmoController:
         self.cli.drive_wheels(-100,-100,duration=0.075)
 
 
+<<<<<<< HEAD
     # def center_target(self):
     #     # centers target. Note that the rotate_right/left methods
     #     # grab a new yolo'd frame to work with, so no worries there!
@@ -208,6 +209,23 @@ class CozmoController:
     #             self.rotate_left(0.075)
     #         else:
     #             not_centered = False
+=======
+    def center_target(self):
+        # centers target. Note that the rotate_right/left methods
+        # grab a new yolo'd frame to work with, so no worries there!
+        print("start centering", flush=True)
+        not_centered = True
+        while(not_centered):
+            offset = self.camera.get_offset()
+            if(offset > self.tolerance):
+                # Drive right
+                self.rotate_right(0.06)
+            elif(offset < -self.tolerance):
+                # Drive left
+                self.rotate_left(0.06)
+            else:
+                not_centered = False
+>>>>>>> 5d0b9967dc907afb046eddb9121c133412272a2a
             
     # def is_centered(self):
     #     offset = self.camera.get_offset()

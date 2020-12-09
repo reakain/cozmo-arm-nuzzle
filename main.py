@@ -133,6 +133,7 @@ def main():
                 # Drive off charger (call twice)
                 # Get to charger edge, override cliff detector
                 controller.drive_off_charger()
+                controller.drive_off_charger()
                 log_message = "Moving off charger..."
 
 
