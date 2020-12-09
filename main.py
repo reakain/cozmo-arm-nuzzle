@@ -30,6 +30,7 @@ def main():
         # Setup controller
         controller = CozmoController(cli,camera)
 
+        # initialize the head angle
         cli.set_head_angle(angle = 0.6)
 
         # Drive off charger (call twice)
