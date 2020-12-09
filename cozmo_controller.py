@@ -81,7 +81,7 @@ class CozmoController:
     def drive_off_charger(self):
         # Drives off charger, call twice to get past cliff detection
         self.driving_off_charger = True
-        self.cli.drive_wheels(100, 100, lwheel_acc=999, rwheel_acc=999, duration= 2)
+        self.cli.drive_wheels(100, 100, lwheel_acc=999, rwheel_acc=999, duration= 1)
         #target = pycozmo.util.Pose(1000, 00.0, 0.0, angle_z=pycozmo.util.Angle(degrees=0.0))
         #self.cli.go_to_pose(target, relative_to_robot=True)
         self.get_off_charger_time = time.time()
