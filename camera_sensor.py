@@ -8,12 +8,13 @@ class CameraSensor:
     def __init__(self, cli, target_name_file):
         #self.yolo = YOLO("./yolo-coco/coco.names","./yolo-coco/yolov3.weights",
         self.yolo = YOLO(target_name_file,"./yolo-coco/yolov3.weights",
-        "./yolo-coco/yolov3.cfg",0.5,0.3)
+        "./yolo-coco/yolov3.cfg",0.7,0.3)
         self.last_im = np.zeros((320,240,3), np.uint8)
         self.updated = False
         self.cli = cli
         self.cli.add_handler(pycozmo.event.EvtNewRawCameraImage, self.on_camera_image)
         #self.target = target
+        self.target = []
 
 
     def on_camera_image(self, cli, new_im):
@@ -31,16 +32,20 @@ class CameraSensor:
         if self.updated:
             # Get last image.
             self.updated = False
-            # YOLO
-            detect_im = self.yolo.analyze_image(self.last_im.copy())
+            
+            # YOLO, returns [x, y, width, height, confidence]
+            self.target = self.yolo.analyze_image(self.last_im.copy())
 
-            # TODO: understand the yolo enough to know if it actually found our target in the image...
-            # If the target is in the image...
-            # if ()
-            #     return True
-            # else:
-            #     return False
-
+            # if target has coordinates
+            if self.target:
+                print("Person found!")
+                return True
+            
+            # if target has None
+            else:
+                print("Person not found")
+                return False
+        
         else:
             return False
 

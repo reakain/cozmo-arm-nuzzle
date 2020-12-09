@@ -28,18 +28,17 @@ def main():
         # Setup controller
         controller = CozmoController(cli,camera)
 
+        cli.set_head_angle(angle = 0.6)
+
         # Drive off charger (call twice)
         # Get to charger edge, override cliff detector
         controller.drive_off_charger()
         controller.drive_off_charger()
 
-        # carsons test comment
-
         # Check for target
         if(not camera.find_target()):
             # If no target, make a sad face and quit
             emote.act_sad()
-            print("no target found")
             return
 
         # Center the target
