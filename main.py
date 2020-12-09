@@ -57,12 +57,6 @@ def main():
             emote.act_sad()
             return
 
-        
-
-
-            
-
-
 
 if __name__ == "__main__":
     main()

@@ -56,31 +56,68 @@ class CozmoController:
         if(self.camera.find_target()):
             return True
 
-        # Do a 45 degree sweep right then left
-        current_angle = 0.0
-        dtheta = 5.0
-        checked_right = False
-        while(current_angle > -45):
-            self.turn_in_place(dtheta)
-            current_angle += dtheta
-            if(self.camera.find_target()):
-                return True
-            if(self.cli.pose.rotation.angle_z.degrees >= 45):
-                dtheta = -dtheta
+        # the elegant way wasn't working, so here's the brute force way
+        if self.rotate_left(.4):
+            return True
+        if self.rotate_left(.4):
+            return True
+        if self.rotate_right(1.2):
+            return True
+        if self.rotate_right(.4):
+            return True
+
         return False
 
+    # duration of 0.4 is ~ 45 degrees
+    def rotate_left (self, dur):
+        self.cli.drive_wheels(-100, 100, lwheel_acc=999, rwheel_acc=999, duration = dur)
+        if(self.camera.find_target()):
+            return True
+        else:
+            return False
 
-    def turn_in_place(self, angle):
-        target = pycozmo.util.Pose(0.0, 0.0, 0.0, angle_z=pycozmo.util.Angle(degrees=angle))
-        self.cli.go_to_pose(target, relative_to_robot=True)
-        # starting = self.cli.pose.rotation.angle_z.degrees
-        # finish = starting + angle
-        # while(abs(self.cli.pose.rotation.angle_z.degrees - finish) > self.tolerance):
-        #     if(angle >= 0):
-        #         self.cli.drive_wheels(100,-100, lwheel_acc=999, rwheel_acc=999)
-        #     else:
-        #         self.cli.drive_wheels(-100,100, lwheel_acc=999, rwheel_acc=999)
-        # self.cli.stop_all_motors()
+    def rotate_right (self, dur):
+        self.cli.drive_wheels(100, -100, lwheel_acc=999, rwheel_acc=999, duration = dur)
+        if(self.camera.find_target()):
+            return True
+        else:
+            return False
+
+    # the elegant way that didn't quite work
+    #def find_target(self):
+    #    if(self.camera.find_target()):
+    #        return True
+    #
+    #    # Do a 45 degree sweep right then left
+    #    current_angle = 0.0
+    #    dtheta = 5.0
+    #    checked_right = False
+    #    while(current_angle > -45):
+    #        print("trying to turn in place")
+    #        self.turn_in_place(dtheta)
+    #        print("made it past first turn call")
+    #        current_angle += dtheta
+    #        if(self.camera.find_target()):
+    #            return True
+    #        if(self.cli.pose.rotation.angle_z.degrees >= 45):
+    #            dtheta = -dtheta
+    #    return False
+
+
+    #def turn_in_place(self, angle):
+    #    print("made it to the call")
+    #    target = pycozmo.util.Pose(0.0, 0.0, 0.0, angle_z=pycozmo.util.Angle(degrees=angle))
+    #    print("got the target")
+    #    self.cli.go_to_pose(target, relative_to_robot=True)
+    #    print("understands target pose")
+    #    # starting = self.cli.pose.rotation.angle_z.degrees
+    #    # finish = starting + angle
+    #   # while(abs(self.cli.pose.rotation.angle_z.degrees - finish) > self.tolerance):
+    #    #     if(angle >= 0):
+    #    #         self.cli.drive_wheels(100,-100, lwheel_acc=999, rwheel_acc=999)
+    #    #     else:
+    #    #         self.cli.drive_wheels(-100,100, lwheel_acc=999, rwheel_acc=999)
+    #    # self.cli.stop_all_motors()
 
 
 
@@ -91,13 +128,13 @@ class CozmoController:
             offset = self.camera.get_offset()
             if(offset > self.tolerance):
                 # Drive right
-                self.cli.drive_wheels(100,-100, lwheel_acc=999, rwheel_acc=999, duration = 0.3)
+                self.rotate_right(0.075)
             elif(offset < -self.tolerance):
                 # Drive left
-                self.cli.drive_wheels(-100,100, lwheel_acc=999, rwheel_acc=999, duration = 0.3)
+                self.rotate_left(0.075)
             else:
                 not_centered = False
-
+            
     def is_centered(self):
         offset = self.camera.get_offset()
         return (offset < self.tolerance and offset > -self.tolerance)

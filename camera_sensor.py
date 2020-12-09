@@ -54,4 +54,11 @@ class CameraSensor:
         # TODO: calculate some kind of offset for the target from center of image
         # Do the stuff to get the offset from center 
         # Positive => right of center, negative => left of center
-        return 1.0
+
+        if self.target:
+            x = self.target[0]
+            offset = x - 320 / 2
+
+            return offset
+
+        return 0
