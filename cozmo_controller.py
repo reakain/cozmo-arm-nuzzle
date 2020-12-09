@@ -143,10 +143,10 @@ class CozmoController:
             offset = self.camera.get_offset()
             if(offset > self.tolerance):
                 # Drive right
-                self.rotate_right(0.075)
+                self.rotate_right(0.06)
             elif(offset < -self.tolerance):
                 # Drive left
-                self.rotate_left(0.075)
+                self.rotate_left(0.06)
             else:
                 not_centered = False
             
