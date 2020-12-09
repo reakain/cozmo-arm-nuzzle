@@ -5,6 +5,8 @@ import time
 import pycozmo
 #import pygame
 
+import signal
+
 import numpy as np
 import cv2
 
@@ -58,5 +60,16 @@ def main():
             return
 
 
+# Callback to handle SIGINT and SIGTERM
+def shutdown_callback(_1, _2):
+    sys.exit(0)
+
+
 if __name__ == "__main__":
+    # Allow keyboard exit
+    signal.signal(signal.SIGINT, shutdown_callback)
+    signal.signal(signal.SIGTERM, shutdown_callback)
+
+    # Start main control run
+    print("Start main control run!", flush=True)
     main()

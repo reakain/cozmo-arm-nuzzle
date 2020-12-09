@@ -23,18 +23,18 @@ class CozmoController:
 
     def on_robot_moving_change(self, cli, state: bool):
         self.robot_moving = state
-        print("Robot is moving: " + str(state))
+        print("Robot is moving: " + str(state), flush=True)
 
     def on_wheels_moving_change(self, cli, state: bool):
         self.wheels_moving = state
-        print("Wheels moving: " + str(state))
+        print("Wheels moving: " + str(state), flush=True)
 
     def on_cliff_detected(self, cli, state: bool):
         # This works. Disabled the print/backup for driving off charger
         # if it doesn't back up, then the next drive_wheels will
         # cause Cozmo to fling itself into the abyss
-        self.cliff_detected = state
         if state:
+            self.cliff_detected = True
             self.cli.stop_all_motors()
             if self.driving_off_charger == False:
                 # back up, say that cliff is found
