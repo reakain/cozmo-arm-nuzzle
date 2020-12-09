@@ -10,12 +10,24 @@ class CozmoController:
         #self.cli.add_handler(pycozmo.protocol_encoder.RobotState, self.on_robot_state)
         self.cli.add_handler(pycozmo.event.EvtCliffDetectedChange, self.on_cliff_detected)
         self.cli.add_handler(pycozmo.protocol_encoder.RobotPoked, self.on_robot_poked)
+        self.cli.add_handler(pycozmo.event.EvtRobotMovingChange, self.on_robot_moving_change)
+        self.cli.add_handler(pycozmo.event.EvtRobotWheelsMovingChange, self.on_wheels_moving_change)
         self.cliff_detected = False
+        self.robot_moving = False
+        self.wheels_moving = False
 
         self.driving_off_charger = False
 
     #def on_robot_state(self, cli, pkt: pycozmo.protocol_encoder.RobotState):
         #if(pkt.status == pycozmo.event.STATUS_EVENTS.
+
+    def on_robot_moving_change(self, cli, state: bool):
+        self.robot_moving = state
+        print("Robot is moving: " + str(state))
+
+    def on_wheels_moving_change(self, cli, state: bool):
+        self.wheels_moving = state
+        print("Wheels moving: " + str(state))
 
     def on_cliff_detected(self, cli, state: bool):
         # This works. Disabled the print/backup for driving off charger
@@ -59,15 +71,16 @@ class CozmoController:
 
 
     def turn_in_place(self, angle):
-        starting = self.cli.pose.rotation.angle_z.degrees
-        finish = starting + angle
-        while(abs(self.cli.pose.rotation.angle_z.degrees - finish) > self.tolerance):
-            if(angle >= 0):
-                self.cli.drive_wheels(100,-100, lwheel_acc=999, rwheel_acc=999)
-            else:
-                self.cli.drive_wheels(-100,100, lwheel_acc=999, rwheel_acc=999)
-        self.cli.stop_all_motors()
-
+        target = pycozmo.util.Pose(0.0, 0.0, 0.0, angle_z=pycozmo.util.Angle(degrees=angle))
+        self.cli.go_to_pose(target, relative_to_robot=True)
+        # starting = self.cli.pose.rotation.angle_z.degrees
+        # finish = starting + angle
+        # while(abs(self.cli.pose.rotation.angle_z.degrees - finish) > self.tolerance):
+        #     if(angle >= 0):
+        #         self.cli.drive_wheels(100,-100, lwheel_acc=999, rwheel_acc=999)
+        #     else:
+        #         self.cli.drive_wheels(-100,100, lwheel_acc=999, rwheel_acc=999)
+        # self.cli.stop_all_motors()
 
 
 
@@ -91,7 +104,7 @@ class CozmoController:
 
     def sense_target(self):
         # TODO: Figure out target sensing
-        return True
+        return self.wheels_moving and not self.robot_moving
 
     def drive_to_target(self):
         # While we haven't sensed the target...
