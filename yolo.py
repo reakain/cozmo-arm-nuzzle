@@ -93,7 +93,7 @@ class YOLO:
 
                     # RETURNS COORDINATES
                     # returns the coordinates and confidence of the box
-                    return([x, y, int(width), int(height), float(confidence)])
+                    return([centerX, centerY, int(width), int(height), float(confidence)])
 
         # IF NO TARGET FOUND, RETURN NONE
         return
