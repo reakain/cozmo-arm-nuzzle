@@ -110,7 +110,29 @@ def main():
     checked_left = False
     tolerance = 2.0
 
+    # Update display
+    # completely fill the surface object 
+    # with white colour 
+    display_surface.fill(black) 
+    # copying the image surface object 
+    # to the display surface object at 
+    # (0, 0) coordinate. 
+    display_surface.blit(camera.get_output_img(), (0, 0)) 
+    # Add text label
+    # create a text suface object,
+    # on which text is drawn on it.
+    text = font.render(log_message, True, green, black)
+    
+    # create a rectangular object for the
+    # text surface object
+    textRect = text.get_rect()
+    
+    # set the center of the rectangular object.
+    textRect.center = (int(textRect.w/2), int(textRect.h/2))
+    # Draws the surface object to the screen.   
+    display_surface.blit(text, textRect)
     # Wait to stabilize.
+
     time.sleep(2.0)
 
     while True:
@@ -149,26 +171,28 @@ def main():
                 log_message += " Checking right..."
                 if(not controller.turning):
                     controller.turn_in_place(1)
-                elif((time.time() - controller.turning_start_time) > 0.4):
-                    controller.stop_turning()
-                    checked_right = True
                 elif(camera.has_target()):
                     controller.stop_turning()
                     emote.act_happy()
                     current_step = "Center on Target"
                     log_message = "Found friend!"
+                elif((time.time() - controller.turning_start_time) > 0.4):
+                    controller.stop_turning()
+                    checked_right = True
+                
             elif not checked_left:
                 log_message += " Checking left..."
                 if(not controller.turning):
                     controller.turn_in_place(-1)
-                elif((time.time() - controller.turning_start_time) > 0.8):
-                    controller.stop_turning()
-                    checked_left = True
                 elif(camera.has_target()):
                     controller.stop_turning()
                     emote.act_happy()
                     current_step = "Center on Target"
                     log_message = "Found friend!"
+                elif((time.time() - controller.turning_start_time) > 0.8):
+                    controller.stop_turning()
+                    checked_left = True
+                
             else:
                 log_message = "Couldn't find friend..."
                 current_step = "Failed"
