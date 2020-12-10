@@ -29,6 +29,8 @@ class YOLO:
         self.weightsPath = weights
         self.configPath = config
 
+        self.center_x_coord = 0
+
         # load our YOLO object detector trained on COCO dataset (80 classes)
         print("[INFO] loading YOLO from disk...")
         
@@ -88,6 +90,8 @@ class YOLO:
                         box = detection[0:4] * np.array([W, H, W, H])
                         (centerX, centerY, width, height) = box.astype("int")
 
+                        self.center_x_coord = centerX
+
                         # use the center (x, y)-coordinates to derive the top and
                         # and left corner of the bounding box
                         x = int(centerX - (width / 2))
@@ -101,7 +105,7 @@ class YOLO:
 
                         # RETURNS COORDINATES
                         # returns the coordinates and confidence of the box
-                        #return([centerX, centerY, int(width), int(height), float(confidence)])
+                        return([centerX, centerY, int(width), int(height), float(confidence)])
 
         
 
@@ -138,3 +142,7 @@ class YOLO:
         #        text = "{}: {:.4f}".format(self.LABELS[classIDs[i]], confidences[i])
         #        cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX,
         #            0.5, color, 2)
+
+    def get_center(self):
+        return self.center_x_coord
+
