@@ -74,7 +74,7 @@ class CameraSensor:
         # half the width of the window (hard-coded)
 
         if self.target != None:
-            x = self.target[0]
+            x = self.target[0] + (self.target[2] / 2)
             offset = x - 320 / 2
 
             return offset
