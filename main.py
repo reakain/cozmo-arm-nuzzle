@@ -108,7 +108,7 @@ def main():
 
     checked_right = False
     checked_left = False
-    tolerance = 2.0
+    tolerance = 4.0
 
     # Update display
     # completely fill the surface object 
@@ -176,7 +176,7 @@ def main():
                     emote.act_happy()
                     current_step = "Center on Target"
                     log_message = "Found friend!"
-                elif((time.time() - controller.turning_start_time) > 0.4):
+                elif((time.time() - controller.turning_start_time) > 1):
                     controller.stop_turning()
                     checked_right = True
                 
@@ -189,7 +189,7 @@ def main():
                     emote.act_happy()
                     current_step = "Center on Target"
                     log_message = "Found friend!"
-                elif((time.time() - controller.turning_start_time) > 0.8):
+                elif((time.time() - controller.turning_start_time) > 2):
                     controller.stop_turning()
                     checked_left = True
                 
@@ -199,19 +199,30 @@ def main():
 
 
         elif current_step == "Center on Target":
+            cli.set_head_angle(angle = 0.6)
             log_message = "Facing new friend..."
-            if(controller.turning):
-                if(not camera.has_target()):
-                    controller.turn_in_place(-controller.turning_direction)
-
-            if(camera.has_target()):
+            offset_dir = camera.get_offset_dir(tolerance)
+            while offset_dir != 0:
+                controller.turn_in_place(offset_dir)
+                time.sleep(0.2)
+                controller.stop_turning()
                 offset_dir = camera.get_offset_dir(tolerance)
-                if(offset_dir == 0):
-                    controller.stop_turning()
-                    log_message = "Centered!"
-                    current_step = "Go To Target"
-                elif(not controller.turning or controller.turning_direction != offset_dir):
-                    controller.turn_in_place(offset_dir)
+            controller.stop_turning()
+            log_message = "Centered!"
+            current_step = "Go To Target"
+            
+            #if(controller.turning):
+            #    if(not camera.has_target()):
+            #        controller.turn_in_place(-controller.turning_direction)
+
+            #if(camera.has_target()):
+            #    offset_dir = camera.get_offset_dir(tolerance)
+            #    if(offset_dir == 0):
+            ##        controller.stop_turning()
+            #        log_message = "Centered!"
+            #        current_step = "Go To Target"
+            #    elif(not controller.turning or controller.turning_direction != offset_dir):
+            #        controller.turn_in_place(offset_dir)
 
             # if(offset > tolerance):
             #     if(not controller.turning or controller.turning_direction < 0):
@@ -233,7 +244,7 @@ def main():
                 controller.bump_back()
                 log_message = "Found ledge!"
                 current_step = "Failed"
-            elif(controller.is_driving and not bump_tracker.has_bumped()):
+            elif(controller.is_driving and bump_tracker.has_bumped()):
                 controller.stop_driving()
                 controller.bump_back()
                 emote.act_happy()
@@ -242,6 +253,8 @@ def main():
             elif(not controller.is_driving):
                 controller.drive_forward()
                 bump_tracker.start_tracking()
+            else:
+                controller.drive_forward()
 
         elif current_step == "Nudge Target":
             log_message = "Getting attention..."

@@ -134,7 +134,7 @@ class CozmoController:
         self.turning = True
         self.turning_start_time = time.time()
         self.turning_direction = np.sign(direction)
-        self.cli.drive_wheels(self.turning_direction*100, -self.turning_direction*100)
+        self.cli.drive_wheels(self.turning_direction*50, -self.turning_direction*50)
         # if(direction > 0):
         #     # Turn right
         #     self.cli.drive_wheels(100, -100)
@@ -193,7 +193,6 @@ class CozmoController:
         self.cli.drive_wheels(-100,-100,duration=0.075)
 
 
-<<<<<<< HEAD
     # def center_target(self):
     #     # centers target. Note that the rotate_right/left methods
     #     # grab a new yolo'd frame to work with, so no worries there!
@@ -209,7 +208,6 @@ class CozmoController:
     #             self.rotate_left(0.075)
     #         else:
     #             not_centered = False
-=======
     def center_target(self):
         # centers target. Note that the rotate_right/left methods
         # grab a new yolo'd frame to work with, so no worries there!
@@ -225,7 +223,6 @@ class CozmoController:
                 self.rotate_left(0.06)
             else:
                 not_centered = False
->>>>>>> 5d0b9967dc907afb046eddb9121c133412272a2a
             
     # def is_centered(self):
     #     offset = self.camera.get_offset()

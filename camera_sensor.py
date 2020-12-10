@@ -19,6 +19,7 @@ class CameraSensor:
         
 
     def has_target(self):
+        self.find_target()
         return self.target != None
 
     def on_camera_image(self, cli, new_im):
@@ -72,9 +73,11 @@ class CameraSensor:
     def get_offset(self):
         # simple offset from center of ID'd object and
         # half the width of the window (hard-coded)
-
+        self.target = self.find_target()
         if self.target != None:
-            x = self.target[0] + (self.target[2] / 2)
+            x = self.yolo.get_center()
+            
+            #x = self.target[0] + (self.target[2] / 2)
             offset = x - 320 / 2
 
             return offset

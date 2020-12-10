@@ -12,7 +12,7 @@ class BumpTracker:
         self.new_bump = False
         self.is_initializing = True
         self.tracking = False
-        self.num_stds = 5
+        self.num_stds = 3
 
     def on_new_measurement(self, cli, pkt: pycozmo.protocol_encoder.RobotState):
         if(not self.tracking):
