@@ -1,7 +1,7 @@
 # Cozmo Arm Nuzzling
 Term project for intro to robotics class, focused on developing routines and sensing for the Cozmo desktop robot to recognize arms and hands and appropriately bump or "nuzzle" them as a means of displaying affection.
 
-## [VIDEO]()
+## [VIDEO](https://www.youtube.com/watch?v=WeJLILyKCJA&t=2s)
 
 ## Environment Setup
 This application uses python 3, and these instructions assume python3 is set as your default python command. You can check your version with ```python --version```
