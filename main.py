@@ -67,7 +67,7 @@ def main():
     textRect = text.get_rect()
     
     # set the center of the rectangular object.
-    textRect.center = (textRect.w/2, textRect.h/2)
+    textRect.center = (int(textRect.w/2), int(textRect.h/2))
     # Draws the surface object to the screen.   
     display_surface.blit(text, textRect)
     # update display
@@ -146,7 +146,7 @@ def main():
 
             # note that duration of 0.4 is about 45 degrees
             elif not checked_right:
-                log_message += "\nChecking right..."
+                log_message += " Checking right..."
                 if(not controller.turning):
                     controller.turn_in_place(1)
                 elif((time.time() - controller.turning_start_time) > 0.4):
@@ -158,7 +158,7 @@ def main():
                     current_step = "Center on Target"
                     log_message = "Found friend!"
             elif not checked_left:
-                log_message += "\nChecking left..."
+                log_message += " Checking left..."
                 if(not controller.turning):
                     controller.turn_in_place(-1)
                 elif((time.time() - controller.turning_start_time) > 0.8):
@@ -180,13 +180,14 @@ def main():
                 if(not camera.has_target()):
                     controller.turn_in_place(-controller.turning_direction)
 
-            offset_dir = camera.get_offset_dir(tolerance)
-            if(offset_dir == 0):
-                controller.stop_turning()
-                log_message = "Centered!"
-                current_step = "Go To Target"
-            elif(not controller.turning or controller.turning_direction != offset_dir):
-                controller.turn_in_place(offset_dir)
+            if(camera.has_target()):
+                offset_dir = camera.get_offset_dir(tolerance)
+                if(offset_dir == 0):
+                    controller.stop_turning()
+                    log_message = "Centered!"
+                    current_step = "Go To Target"
+                elif(not controller.turning or controller.turning_direction != offset_dir):
+                    controller.turn_in_place(offset_dir)
 
             # if(offset > tolerance):
             #     if(not controller.turning or controller.turning_direction < 0):
@@ -256,7 +257,7 @@ def main():
         textRect = text.get_rect()
         
         # set the center of the rectangular object.
-        textRect.center = (textRect.w/2, textRect.h/2)
+        textRect.center = (int(textRect.w/2), int(textRect.h/2))
         # Draws the surface object to the screen.   
         display_surface.blit(text, textRect)
 
