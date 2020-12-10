@@ -19,12 +19,6 @@ from expressions import Expressions
 from cozmo_controller import CozmoController
 from accel_tracker import BumpTracker
 
-class ActionType(enum.Enum):
-    
-    FIND_TARGET = 1
-    DRIVE_TARGET = 2
-    NUDGE_TARGET = 3
-
 def main():
     pygame.init()
 
@@ -73,6 +67,7 @@ def main():
     # update display
     pygame.display.update()
 
+    # some initialized settings
     exit_run = False
     looking_for_target = False
     moving_to_target = False
@@ -80,6 +75,7 @@ def main():
 
     current_step = "Start"
 
+    # setting up the cozmo client
     cli = pycozmo.Client()
     cli.start()
     cli.connect()
@@ -106,6 +102,7 @@ def main():
     # initialize the head angle
     cli.set_head_angle(angle = 0.6)
 
+    # more setting initialization
     checked_right = False
     checked_left = False
     tolerance = 4.0
@@ -135,7 +132,9 @@ def main():
 
     time.sleep(2.0)
 
+    # Control loop
     while True:
+        # Check first for a cliff detection and then stop driving
         if controller.cliff_detected and current_step != "Idle":
             cli.stop_all_motors()
             log_message = "Found a cliff!"
@@ -143,9 +142,11 @@ def main():
             emote.act_sad()
             current_step = "Idle"
 
+        # If an emote it running, don't do any other control steps
         elif emote.anim_running:
             pass
 
+        # Initial start, getting off the charger
         elif current_step == "Start":
             log_message = "Moving off charger..."
             if(not controller.is_on_charger()):

@@ -1,6 +1,8 @@
 # Cozmo Arm Nuzzling
 Term project for intro to robotics class, focused on developing routines and sensing for the Cozmo desktop robot to recognize arms and hands and appropriately bump or "nuzzle" them as a means of displaying affection.
 
+## [VIDEO]()
+
 ## Environment Setup
 This application uses python 3, and these instructions assume python3 is set as your default python command. You can check your version with ```python --version```
 
@@ -10,7 +12,26 @@ This application uses python 3, and these instructions assume python3 is set as 
 4. If you install any additional libraries, update the requirements with ```pip3 freeze > requirements.txt```
 5. Exit the virtual environment with ```deactivate```
 
-## uhhh
+## State Assumptions
+- Cozmo will begin on the charger
+- The charger will be placed near the back of the desk, nominally facing the target
+- The desk will be nominally free of clutter and without obstacles.
+- If a cliff is detected the target cannot be reached.
+- If a bump is detected the target has been reached.
+- The nudge force can be moderated in some way.
+- The environment will be well lit, and the target will be easily separated from the background objects
+- The environment will only have one target object (I.e. only one person)
+- Cozmo will drive straight in the direction it is pointed.
+
+
+## Machine Vision
+We used YOLO to track a person's face.
+
+
+## Bump Sensing
+Cozmo lacks a true "bump" sensor, so instead we implemented rough bump sensing using a rolling average of the root mean square of the acceleration. We only track the root mean square during the drive section to avoid tracking logic on the other drive and stop motions.
+
+## Control Loop
 
 
 ## Obsolete code
